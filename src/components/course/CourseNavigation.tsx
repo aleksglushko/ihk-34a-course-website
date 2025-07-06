@@ -111,16 +111,16 @@ export default function CourseNavigation({ onClose }: CourseNavigationProps) {
   }
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex flex-1">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <div className="flex flex-1 min-h-0">
         {/* Left Sidebar Navigation */}
         <div className="w-80 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
-          {/* Sidebar Header - aligned with main header */}
-          <div className="border-b border-gray-200 px-4 py-4">
-            <h3 className="text-2xl font-bold text-gray-800">Kurs Navigation</h3>
+          {/* Sidebar Header - Fixed */}
+          <div className="border-b border-gray-200 px-8 py-4 flex-shrink-0">
+            <h3 className="text-xl font-bold text-gray-800">Kurs Navigation</h3>
           </div>
           
-          {/* Navigation Content */}
+          {/* Navigation Content - Scrollable */}
           <div className="flex-1 overflow-y-auto p-4">
             <div className="space-y-2">
               {mainSections.map((section) => (
@@ -129,12 +129,16 @@ export default function CourseNavigation({ onClose }: CourseNavigationProps) {
                   onClick={() => handleSectionNavigate(section.id)}
                   className={`w-full text-left p-3 rounded-lg transition-colors ${
                     section.lectures.includes(currentLecture)
-                      ? 'bg-black text-white'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      ? 'bg-gray-800 text-gray-700'
+                      : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <span className="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center text-xs font-medium">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                      section.lectures.includes(currentLecture)
+                        ? 'bg-gray-700 text-white'
+                        : 'bg-gray-400 text-white'
+                    }`}>
                       {section.label}
                     </span>
                     <div>
@@ -151,12 +155,12 @@ export default function CourseNavigation({ onClose }: CourseNavigationProps) {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative flex flex-col min-h-0">
           {/* Close button for course overlay */}
           {onClose && (
             <button
               onClick={onClose}
-              className="fixed top-4 right-4 z-50 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 z-50 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
             >
               <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -164,15 +168,17 @@ export default function CourseNavigation({ onClose }: CourseNavigationProps) {
             </button>
           )}
 
-          {/* Current Lecture */}
-          <CurrentLectureComponent 
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-          />
+          {/* Current Lecture - Non-scrollable container */}
+          <div className="flex-1 flex flex-col min-h-0">
+            <CurrentLectureComponent 
+              onNext={handleNext}
+              onPrevious={handlePrevious}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Footer - Full Width */}
+      {/* Footer - Fixed at bottom */}
       <div className="bg-gray-100 border-t border-gray-200 px-8 py-4 flex-shrink-0">
         <div className="flex justify-between items-center text-xs text-gray-500">
           <span>{currentLecture} | 2025 Wettbergsmayr GbR | Theresienstr. 128, 80333 München | support@standaufsicht-zertifikat.de</span>

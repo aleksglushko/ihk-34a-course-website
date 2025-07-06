@@ -24,9 +24,6 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
                         >
                             Jetzt Kurs starten
                         </button>
-                        <button className="bg-white text-blue-600 font-semibold px-8 py-4 rounded-lg text-lg hover:bg-blue-50 transition-colors">
-                            Kostenlose Probelektion
-                        </button>
                     </div>
                 </div>
             </div>

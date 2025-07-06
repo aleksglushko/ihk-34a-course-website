@@ -23,15 +23,15 @@ export default function TestimonialsSection() {
   const stats = [
     { value: "90%", label: "Bestehensquote" },
     { value: "2,500+", label: "Erfolgreiche Absolventen" },
-    { value: "30h", label: "Lernmaterial" },
-    { value: "200+", label: "Übungsfragen" }
+
+    { value: "100+", label: "Übungsfragen" }
   ]
 
   return (
     <section className="py-20 bg-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-20">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
@@ -88,8 +88,8 @@ export default function TestimonialsSection() {
               bestehen Sie die IHK-Sachkundeprüfung § 34a beim ersten Versuch.
             </p>
             <div className="text-center">
-              <span className="text-3xl font-bold text-blue-600">€97</span>
-              <span className="text-gray-500 line-through ml-2">€149</span>
+              <span className="text-3xl font-bold text-blue-600">€47</span>
+              <span className="text-gray-500 line-through ml-2">149</span>
               <div className="text-sm text-gray-500 mt-1">
                 Einmalzahlung • Lebenslanger Zugang
               </div>

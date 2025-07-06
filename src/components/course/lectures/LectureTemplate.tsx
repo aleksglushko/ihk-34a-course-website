@@ -60,26 +60,14 @@ export default function LectureTemplate({
   }
 
   return (
-    <div className="h-screen bg-white flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-4 flex-shrink-0">
-        <div className="flex justify-between items-center max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-green-700">Wettbergsmayr</h1>
-          
-          {/* Only show subtitle, removed chapter navigation */}
-          {subtitle && (
-            <span className="text-sm text-gray-500">{subtitle}</span>
-          )}
-        </div>
-      </div>
-
+    <div className="h-full bg-white flex flex-col">
       {/* Main Content - Scrollable */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-6xl mx-auto px-8 py-8">
           {/* Chapter Title */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-3">
-              {chapterNumber} | {chapterTitle}
+              {chapterNumber} | {chapterTitle} | {subtitle}
             </h2>
             {description && (
               <p className="text-base text-gray-600 leading-relaxed max-w-4xl">
@@ -89,7 +77,7 @@ export default function LectureTemplate({
           </div>
 
           {/* Content Sections */}
-          <div className="space-y-6">
+          <div className="space-y-6 pb-6">
             {content.map((section, index) => (
               <div
                 key={index}
@@ -122,16 +110,20 @@ export default function LectureTemplate({
               </div>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center mt-12 pt-6 border-t border-gray-200">
+      {/* Navigation - Fixed at bottom */}
+      <div className="flex-shrink-0 bg-white border-t border-gray-200">
+        <div className="max-w-6xl mx-auto px-8 py-6">
+          <div className="flex justify-between items-center">
             <button
               onClick={onPrevious}
               disabled={currentPage === 1}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                 currentPage === 1
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-600 text-white hover:bg-gray-700'
+                  : 'bg-white border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white'
               }`}
             >
               ← Zurück
@@ -144,10 +136,10 @@ export default function LectureTemplate({
             <button
               onClick={onNext}
               disabled={currentPage === totalPages}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                 currentPage === totalPages
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-white border-2 border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white'
               }`}
             >
               Weiter →

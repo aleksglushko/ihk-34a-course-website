@@ -7,8 +7,7 @@ export default function CurriculumSection() {
                 "Gewerbeordnung und Bewachungsverordnung",
                 "Datenschutzrecht und Persönlichkeitsrechte",
                 "Hausrecht und Eigentumsschutz"
-            ],
-            duration: "8 Stunden"
+            ]
         },
         {
             title: "Bürgerliches Gesetzbuch",
@@ -17,8 +16,7 @@ export default function CurriculumSection() {
                 "Vertragsrecht und Schadensersatz",
                 "Eigentum und Besitz",
                 "Rechtfertigungsgründe"
-            ],
-            duration: "6 Stunden"
+            ]
         },
         {
             title: "Strafrecht",
@@ -27,8 +25,7 @@ export default function CurriculumSection() {
                 "Notwehr und Nothilfe",
                 "Jedermannsrechte",
                 "Straftaten gegen die Person"
-            ],
-            duration: "7 Stunden"
+            ]
         },
         {
             title: "Umgang mit Menschen",
@@ -37,8 +34,7 @@ export default function CurriculumSection() {
                 "Kommunikation und Konfliktlösung",
                 "Umgang mit besonderen Personengruppen",
                 "Interkulturelle Kompetenz"
-            ],
-            duration: "5 Stunden"
+            ]
         },
         {
             title: "Grundzüge der Sicherheitstechnik",
@@ -47,8 +43,7 @@ export default function CurriculumSection() {
                 "Elektronische Sicherheitstechnik",
                 "Brandschutz und Arbeitsschutz",
                 "Erste Hilfe Grundlagen"
-            ],
-            duration: "4 Stunden"
+            ]
         }
     ]
 
@@ -61,7 +56,7 @@ export default function CurriculumSection() {
                     </h2>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                         Alle prüfungsrelevanten Themen systematisch aufbereitet. 
-                        Insgesamt 30 Stunden strukturiertes Lernmaterial.
+                        Strukturiertes Lernmaterial für optimale Prüfungsvorbereitung.
                     </p>
                 </div>
                 
@@ -72,9 +67,6 @@ export default function CurriculumSection() {
                                 <h3 className="text-xl font-semibold text-gray-900 mb-2 md:mb-0">
                                     {index + 1}. {module.title}
                                 </h3>
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    {module.duration}
-                                </span>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {module.topics.map((topic, topicIndex) => (
@@ -91,7 +83,7 @@ export default function CurriculumSection() {
                 <div className="mt-12 text-center">
                     <div className="inline-flex items-center px-6 py-3 rounded-lg bg-green-100 text-green-800">
                         <span className="font-medium">Bonus: </span>
-                        <span className="ml-2">200+ Übungsfragen mit ausführlichen Erklärungen</span>
+                        <span className="ml-2">100+ Übungsfragen mit ausführlichen Erklärungen</span>
                     </div>
                 </div>
             </div>
