@@ -21,7 +21,8 @@ export default defineSchema({
     status: v.union(v.literal("pending"), v.literal("completed"), v.literal("failed")),
     createdAt: v.number(),
     completedAt: v.optional(v.number()),
-  }).index("by_paypal_order_id", ["paypalOrderId"]),
+  }).index("by_paypal_order_id", ["paypalOrderId"])
+    .index("by_user", ["userId"]),
 
   courseProgress: defineTable({
     userId: v.id("users"),
@@ -40,5 +41,17 @@ export default defineSchema({
     correctAnswers: v.number(),
     completedAt: v.number(),
     passed: v.boolean(),
+  }).index("by_user", ["userId"]),
+
+  examSessions: defineTable({
+    userId: v.id("users"),
+    questions: v.array(v.number()), // Array of question IDs in the order they were presented
+    answers: v.array(v.string()), // User's answers (A, B, C, D or empty string for no answer)
+    correctAnswers: v.array(v.string()), // Correct answers for comparison
+    currentQuestionIndex: v.number(),
+    isCompleted: v.boolean(),
+    score: v.optional(v.number()),
+    startedAt: v.number(),
+    completedAt: v.optional(v.number()),
   }).index("by_user", ["userId"]),
 }); 

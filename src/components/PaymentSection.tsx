@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js'
+import { useAuth } from '../hooks/useAuth'
 
 interface PaymentSectionProps {
   onClose: () => void
 }
 
 export default function PaymentSection({ onClose }: PaymentSectionProps) {
+  const { login, isAuthenticated } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userName, setUserName] = useState('')
@@ -26,16 +28,17 @@ export default function PaymentSection({ onClose }: PaymentSectionProps) {
     setIsProcessing(true)
     
     try {
-      // Here you would normally:
-      // 1. Create user in Convex
-      // 2. Create payment record
-      // 3. Send confirmation email
-      // 4. Grant course access
+      // Create user account
+      if (!isAuthenticated) {
+        await login(userEmail, userName)
+      }
       
       console.log('Payment successful:', details)
       
-      // Simulate backend processing
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // In a real implementation, you would:
+      // 1. Create payment record with PayPal order ID
+      // 2. Update user payment status
+      // 3. Send confirmation email
       
       alert(`Zahlung erfolgreich! Willkommen ${userName}! Sie erhalten eine E-Mail mit den Zugangsdaten an ${userEmail}.`)
       onClose()

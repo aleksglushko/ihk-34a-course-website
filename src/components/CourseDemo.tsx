@@ -7,7 +7,7 @@ export default function CourseDemo() {
     if (showCourse) {
         return (
             <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-                <CourseNavigation onClose={() => setShowCourse(false)} />
+                <CourseNavigation onClose={() => setShowCourse(false)} isDemo={true} />
             </div>
         )
     }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAuth } from '../../hooks/useAuth'
 import {
   Lecture01Introduction,
   Lecture02WhyTraining,
@@ -29,13 +30,19 @@ import {
   Lecture27ExamDayTips,
   Lecture28MotivationTips
 } from './lectures'
+import ExamComponent from '../ExamComponent'
+import PaymentSection from '../PaymentSection'
 
 interface CourseNavigationProps {
   onClose?: () => void
+  isDemo?: boolean
 }
 
-export default function CourseNavigation({ onClose }: CourseNavigationProps) {
+export default function CourseNavigation({ onClose, isDemo = false }: CourseNavigationProps) {
   const [currentLecture, setCurrentLecture] = useState(1)
+  const [showExam, setShowExam] = useState(false)
+  const [showPayment, setShowPayment] = useState(false)
+  const { hasAccess } = useAuth()
 
   const lectures = [
     { id: 1, component: Lecture01Introduction, title: 'Einführung', shortDesc: 'Kurs Start' },
@@ -99,8 +106,55 @@ export default function CourseNavigation({ onClose }: CourseNavigationProps) {
   const handleSectionNavigate = (sectionId: number) => {
     const section = mainSections.find(s => s.id === sectionId)
     if (section && section.lectures.length > 0) {
-      setCurrentLecture(section.lectures[0])
+      const targetLecture = section.lectures[0]
+      
+      // Check if user is trying to access restricted content
+      if (isDemo && !hasAccess && targetLecture > 2) {
+        setShowPayment(true)
+        return
+      }
+      
+      setCurrentLecture(targetLecture)
     }
+  }
+
+  const handleExamAccess = () => {
+    if (isDemo && !hasAccess) {
+      setShowPayment(true)
+    } else {
+      setShowExam(true)
+    }
+  }
+
+  const getNavigationItemClass = (section: { id: number; label: string; title: string; lectures: number[] }) => {
+    const isRestricted = isDemo && !hasAccess && section.lectures.some((l: number) => l > 2)
+    const isActive = section.lectures.includes(currentLecture)
+    
+    if (isRestricted) {
+      return 'w-full text-left p-3 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed relative'
+    }
+    
+    return `w-full text-left p-3 rounded-lg transition-colors ${
+      isActive
+        ? 'bg-gray-800 text-white'
+        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+    }`
+  }
+
+  if (showExam) {
+    return (
+      <div className="fixed inset-0 bg-white z-50">
+        <ExamComponent onClose={() => setShowExam(false)} />
+      </div>
+    )
+  }
+
+  if (showPayment) {
+    return (
+      <div>
+        <PaymentSection onClose={() => setShowPayment(false)} />
+      </div>
+    )
   }
 
   const currentLectureData = lectures.find(lecture => lecture.id === currentLecture)
@@ -123,34 +177,67 @@ export default function CourseNavigation({ onClose }: CourseNavigationProps) {
           {/* Navigation Content - Scrollable */}
           <div className="flex-1 overflow-y-auto p-4">
             <div className="space-y-2">
-              {mainSections.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => handleSectionNavigate(section.id)}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    section.lectures.includes(currentLecture)
-                      ? 'bg-gray-800 text-gray-700'
-                      : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                      section.lectures.includes(currentLecture)
-                        ? 'bg-gray-700 text-white'
-                        : 'bg-gray-400 text-white'
-                    }`}>
-                      {section.label}
-                    </span>
-                    <div>
-                      <div className="font-medium text-sm">{section.title}</div>
-                      <div className="text-xs opacity-75">
-                        {section.lectures.length} Lektion{section.lectures.length > 1 ? 'en' : ''}
+              {mainSections.map((section) => {
+                const isRestricted = isDemo && !hasAccess && section.lectures.some((l: number) => l > 2)
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => handleSectionNavigate(section.id)}
+                    disabled={isRestricted}
+                    className={getNavigationItemClass(section)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                        section.lectures.includes(currentLecture)
+                          ? 'bg-gray-600 text-white'
+                          : 'bg-gray-600 text-white'
+                      }`}>
+                        {section.label}
+                      </span>
+                      <div className="flex-1">
+                        <div className="font-medium text-sm">{section.title}</div>
+                        <div className="text-xs opacity-75">
+                          {section.lectures.length} Lektion{section.lectures.length > 1 ? 'en' : ''}
+                        </div>
                       </div>
+                      {isRestricted && (
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                      )}
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                )
+              })}
             </div>
+            
+            {/* Exam Button */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <button
+                onClick={handleExamAccess}
+                className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Prüfung starten</span>
+              </button>
+            </div>
+            
+            {/* Buy Course Button for Demo */}
+            {isDemo && !hasAccess && (
+              <div className="mt-4">
+                <button
+                  onClick={() => setShowPayment(true)}
+                  className="w-full p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L17 18m0 0l-2.5-5M17 18l2.5-5" />
+                  </svg>
+                  <span>Vollkurs kaufen</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
