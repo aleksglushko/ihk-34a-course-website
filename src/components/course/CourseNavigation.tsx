@@ -42,7 +42,9 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
   const [currentLecture, setCurrentLecture] = useState(1)
   const [showExam, setShowExam] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
-  const { hasAccess } = useAuth()
+  const [showLogin, setShowLogin] = useState(false)
+  const { hasAccess, isAuthenticated, login } = useAuth()
+  const [loginData, setLoginData] = useState({ email: '', name: '' })
 
   const lectures = [
     { id: 1, component: Lecture01Introduction, title: 'Einführung', shortDesc: 'Kurs Start' },
@@ -92,8 +94,12 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
   ]
 
   const handleNext = () => {
-    if (currentLecture < lectures.length) {
+    const maxLecture = (isDemo && !isAuthenticated) ? 2 : lectures.length
+    if (currentLecture < maxLecture) {
       setCurrentLecture(currentLecture + 1)
+    } else if (isDemo && !isAuthenticated && currentLecture >= 2) {
+      // User trying to go beyond demo content - need to login first
+      setShowLogin(true)
     }
   }
 
@@ -109,8 +115,8 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
       const targetLecture = section.lectures[0]
       
       // Check if user is trying to access restricted content
-      if (isDemo && !hasAccess && targetLecture > 2) {
-        setShowPayment(true)
+      if (isDemo && !isAuthenticated && targetLecture > 2) {
+        setShowLogin(true)
         return
       }
       
@@ -119,15 +125,31 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
   }
 
   const handleExamAccess = () => {
-    if (isDemo && !hasAccess) {
-      setShowPayment(true)
+    if (!isAuthenticated) {
+      setShowLogin(true)
     } else {
       setShowExam(true)
     }
   }
 
+  const handleLogin = async () => {
+    if (!loginData.email || !loginData.name) {
+      alert('Bitte geben Sie Ihre E-Mail-Adresse und Ihren Namen ein.')
+      return
+    }
+    
+    try {
+      await login(loginData.email, loginData.name)
+      setShowLogin(false)
+      setLoginData({ email: '', name: '' })
+    } catch (error) {
+      console.error('Login failed:', error)
+      alert('Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.')
+    }
+  }
+
   const getNavigationItemClass = (section: { id: number; label: string; title: string; lectures: number[] }) => {
-    const isRestricted = isDemo && !hasAccess && section.lectures.some((l: number) => l > 2)
+    const isRestricted = isDemo && !isAuthenticated && section.lectures.some((l: number) => l > 2)
     const isActive = section.lectures.includes(currentLecture)
     
     if (isRestricted) {
@@ -136,8 +158,8 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
     
     return `w-full text-left p-3 rounded-lg transition-colors ${
       isActive
-        ? 'bg-gray-800 text-white'
-        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+        ? 'bg-gray-800 text-gray-700'
+        : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
     }`
   }
 
@@ -153,6 +175,65 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
     return (
       <div>
         <PaymentSection onClose={() => setShowPayment(false)} />
+      </div>
+    )
+  }
+
+  if (showLogin) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Anmelden</h2>
+            <button
+              onClick={() => setShowLogin(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="login-name" className="block text-sm font-medium text-gray-700 mb-2">
+                Vollständiger Name
+              </label>
+              <input
+                type="text"
+                id="login-name"
+                value={loginData.name}
+                onChange={(e) => setLoginData(prev => ({ ...prev, name: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Max Mustermann"
+                required
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-2">
+                E-Mail-Adresse
+              </label>
+              <input
+                type="email"
+                id="login-email"
+                value={loginData.email}
+                onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="max@beispiel.de"
+                required
+              />
+            </div>
+
+            <button
+              onClick={handleLogin}
+              className="w-full bg-blue-600 text-gray-600 py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Anmelden
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
@@ -178,7 +259,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
           <div className="flex-1 overflow-y-auto p-4">
             <div className="space-y-2">
               {mainSections.map((section) => {
-                const isRestricted = isDemo && !hasAccess && section.lectures.some((l: number) => l > 2)
+                const isRestricted = isDemo && !isAuthenticated && section.lectures.some((l: number) => l > 2)
                 return (
                   <button
                     key={section.id}
@@ -189,8 +270,8 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                     <div className="flex items-center space-x-3">
                       <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
                         section.lectures.includes(currentLecture)
-                          ? 'bg-gray-600 text-white'
-                          : 'bg-gray-600 text-white'
+                          ? 'bg-gray-700 text-white'
+                          : 'bg-gray-400 text-white'
                       }`}>
                         {section.label}
                       </span>
@@ -201,7 +282,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                         </div>
                       </div>
                       {isRestricted && (
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                       )}
@@ -211,30 +292,41 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
               })}
             </div>
             
-            {/* Exam Button */}
+            {/* Exam/Login Button */}
             <div className="mt-6 pt-4 border-t border-gray-200">
               <button
                 onClick={handleExamAccess}
-                className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                className="w-full p-3 bg-blue-600 text-gray-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Prüfung starten</span>
+                {!isAuthenticated ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>Anmelden</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Prüfung starten</span>
+                  </>
+                )}
               </button>
             </div>
             
-            {/* Buy Course Button for Demo */}
-            {isDemo && !hasAccess && (
+            {/* Buy Course Button - Always visible in demo mode */}
+            {isDemo && (
               <div className="mt-4">
                 <button
                   onClick={() => setShowPayment(true)}
-                  className="w-full p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                  className="w-full p-3 bg-green-600 text-gray-600 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0L17 18m0 0l-2.5-5M17 18l2.5-5" />
                   </svg>
-                  <span>Vollkurs kaufen</span>
+                  <span>{hasAccess ? 'Vollzugang aktiv' : 'Vollkurs kaufen'}</span>
                 </button>
               </div>
             )}

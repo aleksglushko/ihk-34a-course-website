@@ -3,10 +3,9 @@ import LectureTemplate from './LectureTemplate'
 interface LectureProps {
   onNext?: () => void
   onPrevious?: () => void
-  onNavigate?: (page: number) => void
 }
 
-export default function Lecture02WhyTraining({ onNext, onPrevious, onNavigate }: LectureProps) {
+export default function Lecture02WhyTraining({ onNext, onPrevious }: LectureProps) {
   const content = [
     {
       icon: '🚨',
@@ -48,10 +47,9 @@ export default function Lecture02WhyTraining({ onNext, onPrevious, onNavigate }:
         description="Diese Schulung bereitet dich optimal auf die Sachkundeprüfung vor und verschafft dir den Einstieg ins Sicherheitsgewerbe."
         content={content}
         currentPage={2}
-        totalPages={16}
-        onNext={onNext}
-        onPrevious={onPrevious}
-        onNavigate={onNavigate}
+        totalPages={28}
+              onNext={onNext}
+      onPrevious={onPrevious}
       />
     )
 } 

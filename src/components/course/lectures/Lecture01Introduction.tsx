@@ -3,10 +3,9 @@ import LectureTemplate from './LectureTemplate'
 interface LectureProps {
   onNext?: () => void
   onPrevious?: () => void
-  onNavigate?: (page: number) => void
 }
 
-export default function Lecture01Introduction({ onNext, onPrevious, onNavigate }: LectureProps) {
+export default function Lecture01Introduction({ onNext, onPrevious }: LectureProps) {
   const content = [
     {
       icon: '🎯',
@@ -46,10 +45,9 @@ export default function Lecture01Introduction({ onNext, onPrevious, onNavigate }
         description="Diese Schulung vermittelt das notwendige Wissen und die praktischen Fähigkeiten, um die Sachkundeprüfung gemäß § 34a GewO erfolgreich zu bestehen."
         content={content}
         currentPage={1}
-        totalPages={16}
-        onNext={onNext}
-        onPrevious={onPrevious}
-        onNavigate={onNavigate}
+        totalPages={28}
+              onNext={onNext}
+      onPrevious={onPrevious}
       />
     )
 } 
