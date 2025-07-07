@@ -217,7 +217,7 @@ export default function DemoQuiz() {
                         disabled={selectedAnswer === null}
                         className={`px-6 py-3 rounded-lg transition-colors ${
                         selectedAnswer !== null
-                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                            ? 'bg-blue-700 text-white hover:bg-blue-700'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                     >
