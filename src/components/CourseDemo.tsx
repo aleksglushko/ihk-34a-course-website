@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { CourseNavigation } from './course'
 
-export default function CourseDemo({ onGetStarted }: { onGetStarted: () => void }) {
+export default function CourseDemo() {
 
     const [showCourse, setShowCourse] = useState(false)
 
     if (showCourse) {
         return (
             <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-                <CourseNavigation onClose={() => setShowCourse(false)} isDemo={true} onGetStarted={onGetStarted} />
+                <CourseNavigation onClose={() => setShowCourse(false)} isDemo={true} />
             </div>
         )
     }

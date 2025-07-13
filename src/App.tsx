@@ -29,7 +29,7 @@ function AppContent() {
             <HeroSection onGetStarted={handleGetStarted} />
             <BenefitsSection />
             <CurriculumSection />
-            <CourseDemo onGetStarted={handleGetStarted} />
+            <CourseDemo />
             
             {/* Demo Quiz Section */}
             {/* <section id="demo" className="py-20 bg-white">

@@ -69,6 +69,7 @@ export const registerUser = mutation({
         amount: 89.99,
         currency: "EUR",
         promoCode: args.promoCode,
+        createdAt: Date.now(),
       });
     } else {
       // Free payment record for KOCH100 users
@@ -79,6 +80,8 @@ export const registerUser = mutation({
         currency: "EUR",
         promoCode: args.promoCode,
         purchaseDate: Date.now(),
+        createdAt: Date.now(),
+        completedAt: Date.now(),
       });
     }
 

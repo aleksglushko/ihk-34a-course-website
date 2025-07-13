@@ -20,7 +20,11 @@ export const createUser = mutation({
     // Create new user
     const userId = await ctx.db.insert("users", {
       email: args.email,
+      password: "", // Will be set later
+      createdAt: Date.now(),
       name: args.name,
+      surname: "", // Default empty value
+      phone: "", // Default empty value
       hasAccess: false,
       paymentStatus: "pending",
       lastLogin: Date.now(),

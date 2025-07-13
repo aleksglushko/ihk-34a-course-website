@@ -31,7 +31,7 @@ export const updatePaymentStatus = mutation({
   handler: async (ctx, args) => {
     const payment = await ctx.db
       .query("payments")
-      .withIndex("by_paypal_order_id", (q) => q.eq("paypalOrderId", args.paypalOrderId))
+      .filter((q) => q.eq(q.field("paypalOrderId"), args.paypalOrderId))
       .first();
 
     if (!payment) {
@@ -65,7 +65,7 @@ export const getPaymentByOrderId = query({
   handler: async (ctx, args) => {
     const payment = await ctx.db
       .query("payments")
-      .withIndex("by_paypal_order_id", (q) => q.eq("paypalOrderId", args.paypalOrderId))
+      .filter((q) => q.eq(q.field("paypalOrderId"), args.paypalOrderId))
       .first();
 
     return payment;

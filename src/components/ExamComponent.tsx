@@ -77,7 +77,7 @@ export default function ExamComponent({ onClose }: ExamComponentProps) {
     setExamResult(null)
   }
 
-  const getAnswerOptionClass = (option: string, index: number) => {
+  const getAnswerOptionClass = (_option: string, index: number) => {
     const letter = String.fromCharCode(65 + index) // A, B, C, D
     const baseClass = "w-full text-left p-4 rounded-lg border-2 transition-all duration-200 hover:bg-gray-50"
     

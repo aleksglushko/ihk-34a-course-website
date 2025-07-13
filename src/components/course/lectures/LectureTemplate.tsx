@@ -17,6 +17,7 @@ interface LectureTemplateProps {
   totalPages: number
   onNext?: () => void
   onPrevious?: () => void
+  onNavigate?: (page: number) => void
 }
 
 export default function LectureTemplate({
@@ -28,7 +29,7 @@ export default function LectureTemplate({
   currentPage,
   totalPages,
   onNext = () => {},
-  onPrevious = () => {}
+  onPrevious = () => {},
 }: LectureTemplateProps) {
   const [activeSection, setActiveSection] = useState<number | null>(null)
 
