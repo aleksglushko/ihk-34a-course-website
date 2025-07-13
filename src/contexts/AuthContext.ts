@@ -12,11 +12,31 @@ interface User {
   lastLogin?: number;
 }
 
+interface LoginResult {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    surname: string;
+    hasAccess: boolean;
+  };
+  token: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, name: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<LoginResult>;
   logout: () => void;
+  register: (userData: {
+    email: string;
+    password: string;
+    name: string;
+    surname: string;
+    phone: string;
+    address?: string;
+    promoCode?: string;
+  }) => Promise<LoginResult>;
   isAuthenticated: boolean;
   hasAccess: boolean;
   completePayment: (paypalOrderId: string, paypalPaymentId?: string) => Promise<void>;
@@ -24,4 +44,4 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export type { User, AuthContextType }; 
+export type { User, AuthContextType, LoginResult }; 

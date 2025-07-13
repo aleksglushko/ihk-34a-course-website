@@ -5,55 +5,66 @@ import { AuthContext, type User, type AuthContextType } from './AuthContext';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentToken, setCurrentToken] = useState<string | null>(null);
 
-  const createUser = useMutation(api.users.createUser);
+  const loginUser = useMutation(api.auth.loginUser);
+  const registerUser = useMutation(api.auth.registerUser);
   const updatePaymentStatus = useMutation(api.payments.updatePaymentStatus);
 
-  // Load user from localStorage on mount
+  // Query to verify token
+  const tokenVerification = useQuery(
+    api.auth.verifyToken,
+    currentToken ? { token: currentToken } : 'skip'
+  );
+
+  // Load token from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('courseUser');
-    if (savedUser) {
-      try {
-        const userData = JSON.parse(savedUser);
-        setCurrentUserEmail(userData.email);
-      } catch (error) {
-        console.error('Error parsing saved user:', error);
-        localStorage.removeItem('courseUser');
-      }
+    const savedToken = localStorage.getItem('authToken');
+    if (savedToken) {
+      setCurrentToken(savedToken);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
-  // Query user data if we have an email
-  const userData = useQuery(
-    api.users.getUserByEmail,
-    currentUserEmail ? { email: currentUserEmail } : 'skip'
-  );
-
-  // Update user state when userData changes
+  // Update user state when token verification changes
   useEffect(() => {
-    if (userData) {
-      setUser(userData as User);
-      // Update localStorage with fresh data
-      localStorage.setItem('courseUser', JSON.stringify({
-        email: userData.email,
-        name: userData.name,
-      }));
+    if (tokenVerification !== undefined) {
+      setIsLoading(false);
+      if (tokenVerification.valid && tokenVerification.user) {
+        setUser({
+          _id: tokenVerification.user.id,
+          email: tokenVerification.user.email,
+          name: tokenVerification.user.name,
+          surname: tokenVerification.user.surname,
+          hasAccess: tokenVerification.user.hasAccess,
+          paymentStatus: 'completed', // Assuming if they have access, payment is completed
+        } as User);
+        
+        // Update localStorage with fresh user data
+        localStorage.setItem('userData', JSON.stringify(tokenVerification.user));
+      } else {
+        // Token is invalid or expired, clear everything
+        setUser(null);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+        setCurrentToken(null);
+      }
     }
-  }, [userData]);
+  }, [tokenVerification]);
 
-  const login = async (email: string, name: string) => {
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      await createUser({ email, name });
-      setCurrentUserEmail(email);
+      const result = await loginUser({ email, password });
       
-      // Save to localStorage
-      localStorage.setItem('courseUser', JSON.stringify({
-        email: email,
-        name: name,
-      }));
+      // Store JWT token and user data
+      localStorage.setItem('authToken', result.token);
+      localStorage.setItem('userData', JSON.stringify(result.user));
+      setCurrentToken(result.token);
+      
+      return result;
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -62,10 +73,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const register = async (userData: {
+    email: string;
+    password: string;
+    name: string;
+    surname: string;
+    phone: string;
+    address?: string;
+    promoCode?: string;
+  }) => {
+    setIsLoading(true);
+    try {
+      const result = await registerUser(userData);
+      
+      // Store JWT token and user data
+      localStorage.setItem('authToken', result.token);
+      localStorage.setItem('userData', JSON.stringify(result.user));
+      setCurrentToken(result.token);
+      
+      return result;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     setUser(null);
-    setCurrentUserEmail(null);
-    localStorage.removeItem('courseUser');
+    setCurrentToken(null);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('courseUser'); // Remove old storage key too
   };
 
   const completePayment = async (paypalOrderId: string, paypalPaymentId?: string) => {
@@ -85,9 +125,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value: AuthContextType = {
     user,
-    isLoading: isLoading || (!!currentUserEmail && !userData),
+    isLoading,
     login,
     logout,
+    register,
     isAuthenticated: !!user,
     hasAccess: user?.hasAccess ?? false,
     completePayment,
