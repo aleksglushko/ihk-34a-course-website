@@ -51,7 +51,7 @@ export default function Lecture09EmergencyBehavior({ onNext, onPrevious, onNavig
       description="Sicherheitskräfte müssen in Ausnahmesituationen schnell, überlegt und rechtssicher handeln – ohne sich oder andere zu gefährden."
       content={content}
       currentPage={9}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

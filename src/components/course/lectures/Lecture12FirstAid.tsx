@@ -51,7 +51,7 @@ export default function Lecture12FirstAid({ onNext, onPrevious, onNavigate }: Le
       description="Als Sicherheitskraft bist du zur Hilfeleistung verpflichtet – richtiges Verhalten rettet Leben."
       content={content}
       currentPage={12}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

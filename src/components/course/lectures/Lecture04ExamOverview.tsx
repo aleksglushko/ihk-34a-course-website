@@ -49,7 +49,7 @@ export default function Lecture04ExamOverview({ onNext, onPrevious, onNavigate }
         description="Diese Schulung bereitet dich gezielt und verständlich auf die IHK-Sachkundeprüfung nach § 34a GewO vor – mit dem Ziel: bestehen."
         content={content}
         currentPage={4}
-        totalPages={16}
+        totalPages={28}
         onNext={onNext}
         onPrevious={onPrevious}
         onNavigate={onNavigate}

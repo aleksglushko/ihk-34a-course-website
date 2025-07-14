@@ -51,7 +51,7 @@ export default function Lecture11DangerSituations({ onNext, onPrevious, onNaviga
       description="In Gefahrensituationen ist klares, ruhiges und verantwortungsvolles Handeln Pflicht – deine Reaktion kann entscheidend sein."
       content={content}
       currentPage={11}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

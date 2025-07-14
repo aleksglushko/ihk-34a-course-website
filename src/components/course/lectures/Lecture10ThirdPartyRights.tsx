@@ -51,7 +51,7 @@ export default function Lecture10ThirdPartyRights({ onNext, onPrevious, onNaviga
       description="Als Sicherheitskraft repräsentierst du den Auftraggeber – deine rechtlichen Befugnisse sind begrenzt, aber klar geregelt."
       content={content}
       currentPage={10}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

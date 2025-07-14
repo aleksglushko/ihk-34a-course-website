@@ -51,7 +51,7 @@ export default function Lecture06LegalDuties({ onNext, onPrevious, onNavigate }:
         description="Sicherheitskräfte haben klare rechtliche Pflichten – wer sie kennt und einhält, schützt sich und andere."
         content={content}
         currentPage={6}
-        totalPages={16}
+        totalPages={28}
         onNext={onNext}
         onPrevious={onPrevious}
         onNavigate={onNavigate}

@@ -50,7 +50,7 @@ export default function Lecture03SecurityOverview({ onNext, onPrevious, onNaviga
         description="Das Sicherheitsgewerbe ist ein verantwortungsvoller Beruf mit klaren gesetzlichen Anforderungen – die Sachkundeprüfung ist der Einstieg."
         content={content}
         currentPage={3}
-        totalPages={16}
+        totalPages={28}
         onNext={onNext}
         onPrevious={onPrevious}
         onNavigate={onNavigate}

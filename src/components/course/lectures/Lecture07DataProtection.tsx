@@ -51,7 +51,7 @@ export default function Lecture07DataProtection({ onNext, onPrevious, onNavigate
       description="Sicherheitskräfte müssen rechtlich sicher handeln – gerade bei Konflikten und im Umgang mit Daten."
       content={content}
       currentPage={7}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

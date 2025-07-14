@@ -51,7 +51,7 @@ export default function Lecture14PatrolServices({ onNext, onPrevious, onNavigate
       description="Kontroll- und Schließdienste gehören zu den Kernaufgaben im Sicherheitsdienst – hier ist Sorgfalt und Zuverlässigkeit gefragt."
       content={content}
       currentPage={14}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

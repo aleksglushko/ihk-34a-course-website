@@ -51,7 +51,7 @@ export default function Lecture08Deescalation({ onNext, onPrevious, onNavigate }
       description="Im Sicherheitsdienst zählt nicht die Stärke, sondern die Fähigkeit, Konflikte frühzeitig zu erkennen und zu entschärfen."
       content={content}
       currentPage={8}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

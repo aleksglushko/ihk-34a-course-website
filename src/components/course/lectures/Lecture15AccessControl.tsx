@@ -51,7 +51,7 @@ export default function Lecture15AccessControl({ onNext, onPrevious, onNavigate 
       description="Die Zugangskontrolle ist eine zentrale Sicherheitsmaßnahme – rechtlich sauber und professionell durchgeführt, schützt sie Menschen und Objekte."
       content={content}
       currentPage={15}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

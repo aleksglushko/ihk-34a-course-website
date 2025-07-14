@@ -51,7 +51,7 @@ export default function Lecture16EventSecurity({ onNext, onPrevious, onNavigate 
       description="Großveranstaltungen stellen besondere Anforderungen an Sicherheitskräfte – Überblick, Kommunikation und Stressresistenz sind entscheidend."
       content={content}
       currentPage={16}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

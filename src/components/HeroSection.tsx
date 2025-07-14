@@ -12,7 +12,7 @@ export default function HeroSection({ onGetStarted }: HeroSectionProps) {
         <section 
             className="relative text-white hero-section"
             style={{ 
-                backgroundImage: `url(/heroBackground.png)`, 
+                backgroundImage: `url(${heroBackground})`, 
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 backgroundColor: '#2e3033' // fallback color

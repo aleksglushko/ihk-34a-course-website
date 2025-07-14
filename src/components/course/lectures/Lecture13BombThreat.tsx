@@ -51,7 +51,7 @@ export default function Lecture13BombThreat({ onNext, onPrevious, onNavigate }: 
       description="In extremen Gefahrensituationen ist besonnenes, regelkonformes Handeln überlebenswichtig."
       content={content}
       currentPage={13}
-      totalPages={16}
+              totalPages={28}
       onNext={onNext}
       onPrevious={onPrevious}
       onNavigate={onNavigate}

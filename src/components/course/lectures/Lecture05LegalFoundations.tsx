@@ -50,7 +50,7 @@ export default function Lecture05LegalFoundations({ onNext, onPrevious, onNaviga
         description="Rechtliche Grundlagen sind die Basis der Sachkundeprüfung – wer im Sicherheitsdienst arbeitet, muss das Gesetz kennen."
         content={content}
         currentPage={5}
-        totalPages={16}
+        totalPages={28}
         onNext={onNext}
         onPrevious={onPrevious}
         onNavigate={onNavigate}

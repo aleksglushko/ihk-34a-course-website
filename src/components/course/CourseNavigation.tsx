@@ -92,21 +92,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
         { id: 28, component: Lecture28MotivationTips, title: 'Motivation', shortDesc: 'Motivation' }
     ]
 
-    // Main navigation sections (A-parts only)
-    const mainSections = [
-        { id: 1, label: '1A', title: 'Einführung', lectures: [1] },
-        { id: 2, label: '2A', title: 'Warum Schulung', lectures: [2] },
-        { id: 3, label: '3A', title: 'Sicherheitsgewerbe', lectures: [3] },
-        { id: 4, label: '4A', title: 'Prüfungsüberblick', lectures: [4] },
-        { id: 5, label: '5A', title: 'Recht Grundlagen', lectures: [5, 6] },
-        { id: 6, label: '6A', title: 'Datenschutz Notwehr', lectures: [7, 8] },
-        { id: 7, label: '7A', title: 'Notfälle Verhalten', lectures: [9, 10, 11, 12] },
-        { id: 8, label: '8A', title: 'Praxis Einsatz', lectures: [13, 14, 15, 16] },
-        { id: 9, label: '9A', title: 'Arbeitsrecht', lectures: [17, 18, 19] },
-        { id: 10, label: '10A', title: 'Prüfung IHK', lectures: [20, 21, 22] },
-        { id: 11, label: '11A', title: 'Zertifikat Karriere', lectures: [23, 24, 25] },
-        { id: 12, label: '12A', title: 'FAQ Tipps', lectures: [26, 27, 28] }
-    ]
+
 
     // Mark current page as viewed when it changes
     useEffect(() => {
@@ -130,40 +116,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
         }
     }
 
-    const handleSectionNavigate = (sectionId: number) => {
-        const section = mainSections.find(s => s.id === sectionId)
-        if (section && section.lectures.length > 0) {
-            const targetLecture = section.lectures[0]
-            
-            // Check if user is trying to access restricted content
-            if (isDemo && !isAuthenticated && targetLecture > 2) {
-                setShowLoginForm(true)
-                return
-            }
-            
-            setCurrentLecture(targetLecture)
-            setShowMobileMenu(false) // Close mobile menu when navigating
-        }
-    }
 
-
-
-
-
-    const getNavigationItemClass = (section: { id: number; label: string; title: string; lectures: number[] }) => {
-        const isRestricted = isDemo && !isAuthenticated && section.lectures.some((l: number) => l > 2)
-        const isActive = section.lectures.includes(currentLecture)
-    
-        if (isRestricted) {
-            return 'w-full text-left p-3 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed relative'
-        }
-    
-        return `w-full text-left p-3 rounded-lg transition-colors ${
-        isActive
-            ? 'bg-gray-300 text-gray-700'
-            : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-        }`
-    }
 
     if (showExam) {
         return (
@@ -191,7 +144,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
     return (
         <div className="h-screen flex flex-col overflow-hidden">
             {/* Mobile Header */}
-            <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+            <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
                 <button
                     onClick={() => setShowMobileMenu(!showMobileMenu)}
                     className="p-2 rounded-md hover:bg-gray-100"
@@ -228,9 +181,9 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                 )}
                 
                 {/* Left Sidebar Navigation */}
-                <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col absolute md:relative z-40 h-full`}>
+                <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 absolute md:relative z-40 h-full`}>
                     {/* Sidebar Header - Fixed - Hidden on mobile */}
-                    <div className="hidden md:block border-b border-gray-200 px-8 py-4 flex-shrink-0">
+                    <div className="hidden md:block border-b border-gray-200 px-8 py-4 h-16">
                         <div className="flex justify-between items-center">
                             <h3 className="text-l font-bold text-gray-800">Kurs Navigation</h3>
                             
@@ -254,7 +207,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                     </div>
                 
                     {/* Mobile Close Button */}
-                    <div className="md:hidden flex justify-end p-4">
+                    <div className="md:hidden flex justify-end p-4 h-16">
                         <button
                             onClick={() => setShowMobileMenu(false)}
                             className="p-2 rounded-full hover:bg-gray-100"
@@ -266,50 +219,66 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                     </div>
                 
                     {/* Navigation Content - Scrollable */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                        {mainSections.map((section) => {
-                            const isRestricted = isDemo && !isAuthenticated && section.lectures.some((l: number) => l > 2)
+                    <div className="absolute top-16 bottom-0 left-0 right-0 overflow-y-auto p-4 space-y-1">
+                        {lectures.map((lecture) => {
+                            const isRestricted = isDemo && !isAuthenticated && lecture.id > 2
+                            const isActive = currentLecture === lecture.id
+                            const isViewed = viewedPages.has(lecture.id)
+                            
                             return (
-                            <button
-                                key={section.id}
-                                onClick={() => handleSectionNavigate(section.id)}
-                                disabled={isRestricted}
-                                className={getNavigationItemClass(section)}
-                            >
-                                <div className="flex items-center space-x-3">
-                                <div className="relative">
-                                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                                        section.lectures.includes(currentLecture)
-                                        ? 'bg-gray-400 text-white'
-                                        : 'bg-gray-400 text-white'
-                                    }`}>
-                                        {section.label}
-                                    </span>
-                                    {/* Blue dot for unread pages */}
-                                    {section.lectures.some(lectureId => !viewedPages.has(lectureId)) && (
-                                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></span>
-                                    )}
-                                </div>
-                                <div className="flex-1">
-                                    <div className="font-medium text-sm">{section.title}</div>
-                                    <div className="text-xs opacity-75">
-                                    {section.lectures.length} Lektion{section.lectures.length > 1 ? 'en' : ''}
+                                <button
+                                    key={lecture.id}
+                                    onClick={() => {
+                                        if (isRestricted) {
+                                            setShowLoginForm(true)
+                                            return
+                                        }
+                                        setCurrentLecture(lecture.id)
+                                        setShowMobileMenu(false)
+                                    }}
+                                    disabled={isRestricted}
+                                    className={`w-full text-left p-3 rounded-lg transition-colors ${
+                                        isRestricted
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : isActive
+                                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    <div className="flex items-center space-x-3">
+                                        <div className="relative">
+                                            <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                                                isActive
+                                                    ? 'bg-blue-500 text-white'
+                                                    : isViewed
+                                                    ? 'bg-green-500 text-white'
+                                                    : 'bg-gray-400 text-white'
+                                            }`}>
+                                                {lecture.id}
+                                            </span>
+                                            {/* Blue dot for unread pages */}
+                                            {!isViewed && (
+                                                <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></span>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="font-medium text-sm">{lecture.title}</div>
+                                            <div className="text-xs opacity-75">{lecture.shortDesc}</div>
+                                        </div>
+                                        {isRestricted && (
+                                            <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                            </svg>
+                                        )}
                                     </div>
-                                </div>
-                                {isRestricted && (
-                                    <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                )}
-                                </div>
-                            </button>
+                                </button>
                             )
                         })}
                     </div>
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 relative flex flex-col min-h-0">
+                <div className="flex-1 relative flex flex-col overflow-hidden">
                 {/* Close button for course overlay */}
                 {onClose && (
                     <button
@@ -322,8 +291,8 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                     </button>
                 )}
 
-                {/* Current Lecture - Non-scrollable container */}
-                <div className="flex-1 flex flex-col min-h-0">
+                {/* Current Lecture - Scrollable container */}
+                <div className="flex-1 overflow-y-auto">
                     <CurrentLectureComponent 
                     onNext={handleNext}
                     onPrevious={handlePrevious}
