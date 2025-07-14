@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-    base: '/ihk-34a-course-website/',
+    base: process.env.NODE_ENV === 'production' ? '/ihk-34a-course-website/' : '/',
     plugins: [
         react(),
         tailwindcss(),

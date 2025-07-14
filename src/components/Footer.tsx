@@ -10,7 +10,7 @@ export default function Footer() {
 
     return (
         <>
-            <footer className="bg-gray-900 text-white py-12">
+            <footer id="footer-section" className="bg-gray-900 text-white py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Company Info - Middle Left */}
@@ -42,11 +42,6 @@ export default function Footer() {
                         <div>
                         <h4 className="text-lg font-semibold mb-4">Support</h4>
                         <ul className="space-y-2">
-                            <li>
-                            <a href="#faq" className="text-gray-300 hover:text-white">
-                                FAQ
-                            </a>
-                            </li>
                             <li>
                             <a href="#contact" className="text-gray-300 hover:text-white">
                                 Kontakt
@@ -96,7 +91,7 @@ export default function Footer() {
                                 </button>
                             </div>
                             <div className="text-sm text-gray-400">
-                                © 2024 IHK § 34a Akademie. Alle Rechte vorbehalten.
+                                © 2025 IHK § 34a Akademie. Alle Rechte vorbehalten.
                             </div>
                         </div>
                     </div>

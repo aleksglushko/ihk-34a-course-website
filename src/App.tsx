@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AuthProvider } from './contexts/AuthProvider'
 import { useAuth } from './hooks/useAuth'
+import Header from './components/Header'
 import HeroSection from './components/HeroSection'
 import CourseDemo from './components/CourseDemo'
 import CourseLoginAndRegistrationForm from './components/CourseLoginAndRegistrationForm'
@@ -27,6 +28,7 @@ function AppContent() {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <Header onKursStarten={handleGetStarted} />
             <HeroSection onGetStarted={handleGetStarted} />
             <BenefitsSection />
             <CurriculumSection />

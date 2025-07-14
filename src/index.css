@@ -67,3 +67,33 @@ button {
     color: #747bff;
   }
 }
+
+/* Hero Section Responsive Background */
+.hero-section {
+  /* Mobile: use cover to fill entire screen */
+  background-size: cover;
+}
+
+/* Tablet and up: optimize for wider screens */
+@media (min-width: 768px) {
+  .hero-section {
+    background-size: cover;
+    background-position: center 30%; /* Adjust positioning for better view */
+  }
+}
+
+/* Desktop: use contain if image is too small, cover for full fill */
+@media (min-width: 1024px) {
+  .hero-section {
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+/* Ultra wide screens: prevent image from stretching too much */
+@media (min-width: 1920px) {
+  .hero-section {
+    background-size: cover;
+    background-position: center;
+  }
+}
