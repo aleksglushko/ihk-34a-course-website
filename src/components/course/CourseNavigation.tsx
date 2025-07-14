@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import {
   Lecture01Introduction,
@@ -44,7 +44,22 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
     const [showExam, setShowExam] = useState(false)
     const [showPayment, setShowPayment] = useState(false)
     const [showLoginForm, setShowLoginForm] = useState(false)
+    const [showMobileMenu, setShowMobileMenu] = useState(false)
+    const [viewedPages, setViewedPages] = useState<Set<number>>(() => {
+        const saved = localStorage.getItem('viewedPages')
+        return saved ? new Set(JSON.parse(saved)) : new Set()
+    })
     const { isAuthenticated } = useAuth()
+    
+    // Mark current page as viewed and save to localStorage
+    const markPageAsViewed = (pageId: number) => {
+        setViewedPages(prev => {
+            const newSet = new Set(prev)
+            newSet.add(pageId)
+            localStorage.setItem('viewedPages', JSON.stringify(Array.from(newSet)))
+            return newSet
+        })
+    }
 
     const lectures = [
         { id: 1, component: Lecture01Introduction, title: 'Einführung', shortDesc: 'Kurs Start' },
@@ -93,6 +108,11 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
         { id: 12, label: '12A', title: 'FAQ Tipps', lectures: [26, 27, 28] }
     ]
 
+    // Mark current page as viewed when it changes
+    useEffect(() => {
+        markPageAsViewed(currentLecture)
+    }, [currentLecture, markPageAsViewed])
+
     const handleNext = () => {
         const maxLecture = (isDemo && !isAuthenticated) ? 2 : lectures.length
         if (currentLecture < maxLecture) {
@@ -122,6 +142,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
             }
             
             setCurrentLecture(targetLecture)
+            setShowMobileMenu(false) // Close mobile menu when navigating
         }
     }
 
@@ -169,11 +190,47 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
 
     return (
         <div className="h-screen flex flex-col overflow-hidden">
+            {/* Mobile Header */}
+            <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+                <button
+                    onClick={() => setShowMobileMenu(!showMobileMenu)}
+                    className="p-2 rounded-md hover:bg-gray-100"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <h3 className="text-lg font-bold text-gray-800">Kurs Navigation</h3>
+                {!isAuthenticated ? (
+                    <button
+                        onClick={() => setShowLoginForm(true)}
+                        className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                    >
+                        Anmelden
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => setShowExam(true)}
+                        className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                        Prüfung
+                    </button>
+                )}
+            </div>
+
             <div className="flex flex-1 min-h-0">
+                {/* Mobile Overlay */}
+                {showMobileMenu && (
+                    <div 
+                        className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+                        onClick={() => setShowMobileMenu(false)}
+                    />
+                )}
+                
                 {/* Left Sidebar Navigation */}
-                <div className="w-80 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col">
-                    {/* Sidebar Header - Fixed */}
-                    <div className="border-b border-gray-200 px-8 py-4 flex-shrink-0">
+                <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col absolute md:relative z-40 h-full`}>
+                    {/* Sidebar Header - Fixed - Hidden on mobile */}
+                    <div className="hidden md:block border-b border-gray-200 px-8 py-4 flex-shrink-0">
                         <div className="flex justify-between items-center">
                             <h3 className="text-l font-bold text-gray-800">Kurs Navigation</h3>
                             
@@ -196,6 +253,18 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                         </div>
                     </div>
                 
+                    {/* Mobile Close Button */}
+                    <div className="md:hidden flex justify-end p-4">
+                        <button
+                            onClick={() => setShowMobileMenu(false)}
+                            className="p-2 rounded-full hover:bg-gray-100"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                
                     {/* Navigation Content - Scrollable */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-2">
                         {mainSections.map((section) => {
@@ -208,13 +277,19 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                                 className={getNavigationItemClass(section)}
                             >
                                 <div className="flex items-center space-x-3">
-                                <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                                    section.lectures.includes(currentLecture)
-                                    ? 'bg-gray-400 text-white'
-                                    : 'bg-gray-400 text-white'
-                                }`}>
-                                    {section.label}
-                                </span>
+                                <div className="relative">
+                                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                                        section.lectures.includes(currentLecture)
+                                        ? 'bg-gray-400 text-white'
+                                        : 'bg-gray-400 text-white'
+                                    }`}>
+                                        {section.label}
+                                    </span>
+                                    {/* Blue dot for unread pages */}
+                                    {section.lectures.some(lectureId => !viewedPages.has(lectureId)) && (
+                                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></span>
+                                    )}
+                                </div>
                                 <div className="flex-1">
                                     <div className="font-medium text-sm">{section.title}</div>
                                     <div className="text-xs opacity-75">
@@ -258,10 +333,13 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
             </div>
 
             {/* Footer - Fixed at bottom */}
-            <div className="bg-gray-100 border-t border-gray-200 px-8 py-4 flex-shrink-0">
-                <div className="flex justify-between items-center text-xs text-gray-500">
-                <span>{currentLecture} | 2025 Wettbergsmayr GbR | Theresienstr. 128, 80333 München | support@standaufsicht-zertifikat.de</span>
-                <span>Vorbereitung Sachkundeprüfung § 34a GewO (IHK)</span>
+            <div className="bg-gray-100 border-t border-gray-200 px-4 md:px-8 py-3 md:py-4 flex-shrink-0">
+                <div className="flex flex-col md:flex-row justify-between items-center text-xs md:text-xs text-gray-500 space-y-2 md:space-y-0">
+                    <span className="text-center md:text-left">
+                        Lektion {currentLecture} | 2025 Wettbergsmayr GbR | 
+                        <span className="hidden md:inline"> Theresienstr. 128, 80333 München | support@standaufsicht-zertifikat.de</span>
+                    </span>
+                    <span className="text-center md:text-right">Vorbereitung Sachkundeprüfung § 34a GewO (IHK)</span>
                 </div>
             </div>
         </div>

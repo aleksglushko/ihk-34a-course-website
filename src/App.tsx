@@ -5,6 +5,7 @@ import HeroSection from './components/HeroSection'
 import CourseDemo from './components/CourseDemo'
 import CourseLoginAndRegistrationForm from './components/CourseLoginAndRegistrationForm'
 import { CourseNavigation } from './components/course'
+import QAPage from './components/QAPage'
 import BenefitsSection from './components/BenefitsSection'
 import CurriculumSection from './components/CurriculumSection'
 import Footer from './components/Footer'
@@ -30,6 +31,9 @@ function AppContent() {
             <BenefitsSection />
             <CurriculumSection />
             <CourseDemo />
+            
+            {/* Q&A Section */}
+            <QAPage />
             
             {/* Demo Quiz Section */}
             {/* <section id="demo" className="py-20 bg-white">
