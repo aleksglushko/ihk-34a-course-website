@@ -27,7 +27,7 @@ function AppContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="h-screen bg-gray-50">
             <Header onKursStarten={handleGetStarted} />
             <HeroSection onGetStarted={handleGetStarted} />
             <BenefitsSection />
@@ -57,7 +57,8 @@ function AppContent() {
             
             {/* Show course page for logged-in users */}
             {showCourse && (
-                <div className="fixed inset-0 bg-white z-40 overflow-y-auto">
+                // <div className="fixed inset-0 bg-white z-40 overflow-hidden">
+                <div className="fixed inset-0 z-40 flex flex-col overflow-hidden bg-white">
                     <CourseNavigation onClose={() => setShowCourse(false)} isDemo={false} />
                 </div>
             )}

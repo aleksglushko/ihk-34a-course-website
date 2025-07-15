@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import {
   Lecture01Introduction,
@@ -52,14 +52,15 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
     const { isAuthenticated } = useAuth()
     
     // Mark current page as viewed and save to localStorage
-    const markPageAsViewed = (pageId: number) => {
+    const markPageAsViewed = useCallback((pageId: number) => {
         setViewedPages(prev => {
-            const newSet = new Set(prev)
-            newSet.add(pageId)
-            localStorage.setItem('viewedPages', JSON.stringify(Array.from(newSet)))
-            return newSet
+          const next = new Set(prev)
+          next.add(pageId)
+          localStorage.setItem('viewedPages', JSON.stringify([...next]))
+          return next
         })
-    }
+      }, []) 
+      
 
     const lectures = [
         { id: 1, component: Lecture01Introduction, title: 'Einführung', shortDesc: 'Kurs Start' },
@@ -92,8 +93,6 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
         { id: 28, component: Lecture28MotivationTips, title: 'Motivation', shortDesc: 'Motivation' }
     ]
 
-
-
     // Mark current page as viewed when it changes
     useEffect(() => {
         markPageAsViewed(currentLecture)
@@ -115,8 +114,6 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
             setCurrentLecture(currentLecture - 1)
         }
     }
-
-
 
     if (showExam) {
         return (
@@ -171,7 +168,7 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                 )}
             </div>
 
-            <div className="flex flex-1 min-h-0">
+            <div className="flex flex-1 min-h-0 overflow-hidden">
                 {/* Mobile Overlay */}
                 {showMobileMenu && (
                     <div 
@@ -181,7 +178,15 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                 )}
                 
                 {/* Left Sidebar Navigation */}
-                <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 absolute md:relative z-40 h-full`}>
+                {/* <div className={`${showMobileMenu ? 'block' : 'hidden'} md:block w-full md:w-80 bg-white border-r border-gray-200 flex-shrink-0 absolute md:relative z-40 h-full`}> */}
+                <div className={`${showMobileMenu ? 'block' : 'hidden'} 
+                        md:block 
+                        w-full md:w-80 
+                        bg-white border-r border-gray-200 
+                        absolute md:relative z-40 
+                        h-full 
+                        flex-shrink-0 
+                        flex flex-col min-h-0 overflow-hidden`}>
                     {/* Sidebar Header - Fixed - Hidden on mobile */}
                     <div className="hidden md:block border-b border-gray-200 px-8 py-4 h-16">
                         <div className="flex justify-between items-center">
@@ -278,26 +283,26 @@ export default function CourseNavigation({ onClose, isDemo = false }: CourseNavi
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 relative flex flex-col overflow-hidden">
-                {/* Close button for course overlay */}
-                {onClose && (
-                    <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 z-50 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-                    >
-                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    </button>
-                )}
+                <div className="flex-1 relative flex flex-col min-h-0 overflow-hidden">
+                    {/* Close button for course overlay */}
+                    {onClose && (
+                        <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 z-50 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                        >
+                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        </button>
+                    )}
 
-                {/* Current Lecture - Scrollable container */}
-                <div className="flex-1 overflow-y-auto">
-                    <CurrentLectureComponent 
-                    onNext={handleNext}
-                    onPrevious={handlePrevious}
-                    />
-                </div>
+                    {/* Current Lecture - Scrollable container */}
+                    <div className="flex-1 overflow-y-auto min-h-0">
+                        <CurrentLectureComponent 
+                            onNext={handleNext}
+                            onPrevious={handlePrevious}
+                        />
+                    </div>
                 </div>
             </div>
 
