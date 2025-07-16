@@ -186,6 +186,10 @@ export default function PaymentSection({ onClose }: PaymentSectionProps) {
               />
             </PayPalScriptProvider>
             
+            {/* Actual paypal button */}
+            {/* <script 
+  src="https://www.paypal.com/sdk/js?client-id=BAAE1po6cJKzllrqO7QI40bkByUp6Jtobgp6xvfLYbpRI5sP4e_pWFsi5noES6KjjVMERU6ZTMNG0a8s8Q&components=hosted-buttons&disable-funding=venmo&currency=EUR">
+</script> */}
             <button
               onClick={() => setShowPayPal(false)}
               className="w-full text-gray-600 hover:text-gray-800 text-sm"
